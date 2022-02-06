@@ -1,3 +1,7 @@
+import os
+import logging
+from flask_mail import Mail, Message
+from flask_debugtoolbar import DebugToolbarExtension
 from email_validator import validate_email, EmailNotValidError
 from flask import (
     Flask,
@@ -9,8 +13,20 @@ from flask import (
 )
 
 app = Flask(__name__)
-
 app.config["SECRET_KEY"] = "YouWillNeedThisKey"
+app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
+app.logger.setLevel(logging.DEBUG)
+
+# Mailクラスのconfig
+app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
+app.config["MAIL_PORT"] = os.environ.get("MAIL_PORT")
+app.config["MAIL_USE_TLS"] = os.environ.get("MAIL_USE_TLS")
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
+
+toolbar = DebugToolbarExtension(app)
+mail = Mail(app)
 
 
 @app.route("/")
@@ -39,9 +55,7 @@ def contact():
 @app.route("/contact/complete",
            methods=["GET", "POST"])
 def contact_complete():
-    print(request.method)
     if request.method == "POST":
-        print('test1')
         username = request.form["username"]
         email = request.form["email"]
         description = request.form["description"]
@@ -67,8 +81,24 @@ def contact_complete():
 
         if not is_valid:
             return redirect(url_for("contact"))
+        
+        send_email(
+            email,
+            "問い合わせありがとうございました。",
+            "contact_mail",
+            the_username=username,
+            the_description=description
+        )
 
-        flash("問い合わせありがとうございました")
+        flash("お問い合わせ内容はメールにて送信しました。問い合わせありがとうございました。")
         return redirect(url_for("contact_complete"))
 
     return render_template("contact_complete.html")
+
+
+def send_email(to, subject, template, **kwargs):
+    '''メール送信関数'''
+    msg = Message(subject, recipients=[to])
+    msg.body = render_template(template + ".txt", **kwargs)
+    msg.html = render_template(template + ".html", **kwargs)
+    mail.send(msg)
