@@ -1,5 +1,5 @@
 from flask import Flask
-from crud import views as crud_views
+from apps.crud import views as crud_views
 
 
 def create_app():
