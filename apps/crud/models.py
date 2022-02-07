@@ -1,6 +1,4 @@
 from datetime import datetime
-
-from sqlalchemy import PrimaryKeyConstraint
 from apps.app import db
 from werkzeug.security import generate_password_hash
 
