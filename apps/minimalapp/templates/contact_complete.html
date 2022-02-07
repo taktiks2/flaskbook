@@ -10,5 +10,14 @@
 </head>
 <body>
   <h2>問い合わせ完了</h2>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
 </body>
 </html>
