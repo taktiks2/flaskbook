@@ -9,7 +9,9 @@ from flask import (
     url_for,
     request,
     redirect,
-    flash
+    flash,
+    make_response,
+    session,
 )
 
 app = Flask(__name__)
@@ -49,7 +51,17 @@ def show_name(name):
 
 @app.route("/contact")
 def contact():
-    return render_template("contact.html")
+    # レスポンスオブジェクトを取得する
+    response = make_response(render_template("contact.html"))
+
+    # クッキーを設定する
+    response.set_cookie("flaskbook key", "flaskbook value")
+
+    # セッションを設定する
+    session["username"] = "takeru"
+
+    # レスポンスオブジェクトを返す
+    return response
 
 
 @app.route("/contact/complete",
@@ -81,7 +93,7 @@ def contact_complete():
 
         if not is_valid:
             return redirect(url_for("contact"))
-        
+
         send_email(
             email,
             "問い合わせありがとうございました。",
