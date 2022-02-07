@@ -1,5 +1,6 @@
 from flask import Flask
-from apps.crud import vies as crud_views
+# appsを抜いてただのcrudにすると動かない
+from apps.crud import views as crud_views
 
 def create_app():
     app = Flask(__name__)
