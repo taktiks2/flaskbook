@@ -16,7 +16,7 @@ def create_app():
     app.config.from_mapping(
         SECRET_KEY="slkFgWiosfweoi35dkdfoDD",
         SQLALCHEMY_DATABASE_URI=
-            f"sqlite:///{Path(__file__).parent.parent / 'local.sqlite'}",
+            f"sqlite:///{Path(__file__).parent.parent/'local.sqlite'}",
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
 
@@ -28,3 +28,6 @@ def create_app():
     app.register_blueprint(crud_views.crud, url_prefix="/crud")
 
     return app
+
+def tes():
+    pass
