@@ -1,1 +1,1 @@
-import apps.crud.models
+# from apps.crud.models import User

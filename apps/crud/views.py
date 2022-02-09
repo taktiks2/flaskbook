@@ -8,6 +8,7 @@ crud = Blueprint(
     static_folder="static",
 )
 
+
 # indexエンドポイントを作成
 @crud.route("/")
 def index():

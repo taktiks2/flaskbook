@@ -1,13 +1,9 @@
 from pathlib import Path
-from re import S
 from flask import Flask
-import sqlalchemy
-# appsを抜いてただのcrudにすると動かない(flask run時にimport error)
 from apps.crud import views as crud_views
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
+from apps.crud.models import db, User
 
-db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
@@ -28,6 +24,3 @@ def create_app():
     app.register_blueprint(crud_views.crud, url_prefix="/crud")
 
     return app
-
-def tes():
-    pass
