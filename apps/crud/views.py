@@ -56,7 +56,6 @@ def edit_user(user_id):
     form = UserForm()
     # Userモデルを利用してユーザーを取得
     user = User.query.filter_by(id=user_id).first()
-
     # formからサブミットされた場合はユーザーを更新してユーザー一覧画面へリダイレクト
     if form.validate_on_submit():
         user.username = form.username.data
@@ -68,3 +67,11 @@ def edit_user(user_id):
     return render_template("crud/edit.html",
                            user=user,
                            form=form)
+
+
+@crud.route("/users/<user_id>/delete", methods=["POST"])
+def delete_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for("crud.users"))
