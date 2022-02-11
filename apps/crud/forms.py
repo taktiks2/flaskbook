@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-form wtforms import PasswordField, StringField, SubmitField
+from wtforms import PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, length
 
 
@@ -22,7 +22,7 @@ class UserForm(FlaskForm):
         ],
     )
     # ユーザーフォームpassword属性のラベルとバリデータを設定
-    passowrd = StringField(
+    password = PasswordField(
         "パスワード",
         validators=[DataRequired(message="パスワードは必須です。")]
     )
