@@ -49,3 +49,22 @@ def users():
     '''ユーザーの一覧取得'''
     users = User.query.all()
     return render_template("crud/index.html", users=users)
+
+
+@crud.route("/users/<user_id>", methods=["GET", "POST"])
+def edit_user(user_id):
+    form = UserForm()
+    # Userモデルを利用してユーザーを取得
+    user = User.query.filter_by(id=user_id).first()
+
+    # formからサブミットされた場合はユーザーを更新してユーザー一覧画面へリダイレクト
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.password = form.password.data
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for("crud.users"))
+    return render_template("crud/edit.html",
+                           user=user,
+                           form=form)

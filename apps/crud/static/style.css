@@ -3,13 +3,13 @@
 }
 
 table {
-  隣接するボーダーを重ねて一本にして表示
+  /* 隣接するボーダーを重ねて一本にして表示 */
   border-collapse: collapse;
 }
 
 table,
 th,
 td {
-  1pxの実線にして色を調節
+  /* 1pxの実線にして色を調節 */
   border: 1px solid #c0c0c0;
 }

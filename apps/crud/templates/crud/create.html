@@ -6,10 +6,10 @@
 </head>
 <body>
 	<h2>ユーザー新規作成</h2>
-	<form 
-		action="{{ url_for('crud.create_user') }}"
-		method="POST"
-		novalidate="novalidate"
+	<form
+	 action="{{ url_for('crud.create_user') }}"
+	 method="POST"
+	 novalidate="novalidate"
 		>
 		{{ form.csrf_token }}
 		<p>
