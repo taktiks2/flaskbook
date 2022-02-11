@@ -38,8 +38,14 @@ def create_user():
         )
         # ユーザーを追加してコミット
         db.session.add(user)
-        db.session.commi()
+        db.session.commit()
         # ユーザーの一覧画面へリダイレクト
-        return redirect(url_for("curd.users"))
+        return redirect(url_for("crud.users"))
     return render_template("crud/create.html", form=form)
 
+
+@crud.route("/users")
+def users():
+    '''ユーザーの一覧取得'''
+    users = User.query.all()
+    return render_template("crud/index.html", users=users)
