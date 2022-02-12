@@ -22,7 +22,7 @@ class UserForm(FlaskForm):
         ],
     )
     # ユーザーフォームpassword属性のラベルとバリデータを設定
-    passowrd = PasswordField(
+    password = PasswordField(
         "パスワード",
         validators=[DataRequired(message="パスワードは必須です。")]
     )
