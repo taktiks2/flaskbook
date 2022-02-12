@@ -1,5 +1,6 @@
 from apps.crud.forms import UserForm
 from flask import Blueprint, render_template, redirect, url_for
+from flask_login import login_required
 from apps.crud.models import db, User
 
 # Blueprintでcrudアプリを生成
@@ -13,12 +14,14 @@ crud = Blueprint(
 
 # indexエンドポイントを作成
 @crud.route("/")
+@login_required
 def index():
     return render_template("crud/index.html")
 
 
 # sqlエンドポイント
 @crud.route("/sql")
+@login_required
 def sql():
     # User.query.all()でも可
     db.session.query(User).get(2)
@@ -26,6 +29,7 @@ def sql():
 
 
 @crud.route("/users/new", methods=["GET", "POST"])
+@login_required
 def create_user():
     form = UserForm()
     # フォームの値をバリデート
@@ -45,6 +49,7 @@ def create_user():
 
 
 @crud.route("/users")
+@login_required
 def users():
     '''ユーザーの一覧取得'''
     users = User.query.all()
@@ -52,6 +57,7 @@ def users():
 
 
 @crud.route("/users/<user_id>", methods=["GET", "POST"])
+@login_required
 def edit_user(user_id):
     form = UserForm()
     # Userモデルを利用してユーザーを取得
@@ -70,6 +76,7 @@ def edit_user(user_id):
 
 
 @crud.route("/users/<user_id>/delete", methods=["POST"])
+@login_required
 def delete_user(user_id):
     user = User.query.filter_by(id=user_id).first()
     db.session.delete(user)
