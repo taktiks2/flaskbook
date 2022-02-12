@@ -48,6 +48,7 @@ def create_user():
     return render_template("crud/create.html", form=form)
 
 
+# login_requiredはrouteの下に書くこと！じゃないと機能しない
 @crud.route("/users")
 @login_required
 def users():
