@@ -19,6 +19,10 @@ class User(db.Model, UserMixin):
     updated_at = db.Column(
         db.DateTime, default=datetime.now, onupdate=datetime.now
     )
+    # backrefを利用してrelation情報を設定
+    # order_byで取得時のソートカラムを取得
+    user_images = db.relationship(
+        "UserImage", backref="user", order_by="desc(UserImage.id)")
 
     # パスワードをセットするためのプロパティ
     @property
