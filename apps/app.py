@@ -3,7 +3,7 @@ from apps.crud import views as crud_views
 from apps.auth import views as auth_views
 from apps.detector import views as dt_views
 from apps.crud.models import db, User, login_manager
-from apps.detector.models import UserImage
+from apps.detector.models import UserImage, UserImageTag
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from apps.config import config

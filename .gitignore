@@ -1,5 +1,9 @@
 Session.vim
 environment.yml
+model.pt
+*.jpg
+*.jpeg
+*.png
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,flask,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,flask,vscode
