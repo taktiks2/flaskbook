@@ -1,9 +1,12 @@
 Session.vim
 environment.yml
-model.pt
+<<<<<<< HEAD
 *.jpg
 *.jpeg
 *.png
+=======
+>>>>>>> 7e1b873 (Add detector)
+model.pt
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,flask,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,flask,vscode

@@ -7,7 +7,7 @@ import torchvision
 from pathlib import Path
 from apps.crud.models import db, User
 from apps.detector.models import UserImage, UserImageTag
-from apps.detector.forms import UploadImageForm, DetectorForm
+from apps.detector.forms import UploadImageForm, DetectorForm, DeleteForm
 from flask_login import current_user, login_required
 from PIL import Image
 from sqlalchemy.exc import SQLAlchemyError
@@ -18,7 +18,8 @@ from flask import (
     send_from_directory,
     redirect,
     url_for,
-    flash
+    flash,
+    request,
 )
 
 
@@ -51,12 +52,16 @@ def index():
         user_image_tag_dict[user_image.UserImage.id] = user_image_tags
         # 物体検知フォームをインスタンス化
         detector_form = DetectorForm()
+        # 画像削除フォームをインスタンス化
+        delete_form = DeleteForm()
     return render_template("detector/index.html",
                            user_images=user_images,
                            # タグ一覧をテンプレートに渡す
                            user_image_tag_dict=user_image_tag_dict,
                            # 物体検知フォームをテンプレートに渡す
                            detector_form=detector_form,
+                           # 画像削除フォームをテンプレートに渡す
+                           delete_form=delete_form
                            )
 
 
@@ -126,6 +131,86 @@ def detect(image_id):
         current_app.logger.error(e)
         return redirect(url_for("detector.index"))
     return redirect(url_for("detector.index"))
+
+
+@dt.route("/images/delete/<string:image_id>", methods=["POST"])
+@login_required
+def delete_image(image_id):
+    try:
+        # user_image_tagsテーブルからレコードを削除
+        db.session.query(UserImageTag).filter(
+            UserImageTag.user_image_id == image_id
+        ).delete()
+
+        # user_imageテーブルからレコードを削除
+        db.session.query(UserImage).filter(
+            UserImage.id == image_id
+        ).delete()
+
+        db.session.commit()
+    except SQLAlchemyError as e:
+        flash("画像削除処理でエラーが発生しました。")
+        # エラーログ出力
+        current_app.logger.errer(e)
+        db.session.rollback()
+    return redirect(url_for("detector.index"))
+
+
+@dt.route("/images/search", methods=["GET"])
+def search():
+    # 画像一覧を取得
+    user_images = db.session.query(User, UserImage).join(
+        UserImage, User.id == UserImage.user_id
+    )
+
+    # GETパラメータから検索ワードを取得
+    search_text = request.args.get("search")
+    user_image_tag_dict = {}
+    filtered_user_images = []
+
+    # user_imagesをループしuser_imagesに紐づくタグ情報を検索
+    for user_image in user_images:
+        # 検索ワードが空の場合はすべてのタグを取得
+        if not search_text:
+            # タグ一覧を取得
+            user_image_tags = (
+                db.session.query(UserImageTag)
+                .filter(UserImageTag.user_image_id == user_image.UserImage.id)
+                .all()
+            )
+        else:
+            # 検索ワードで絞り込んだタグを取得
+            user_image_tags = (
+                db.session.query(UserImageTag)
+                .filter(UserImageTag.user_image_id == user_image.UserImage.id)
+                .filter(UserImageTag.tag_name.like("%" + search_text + "%"))
+                .all()
+            )
+            # タグが見つからなかったら画像を返さない
+            if not user_image_tags:
+                continue
+            # タグがある場合はタグ情報を取得しなおす
+            user_image_tags = (
+                db.session.query(UserImageTag)
+                .filter(UserImageTag.user_image_id == user_image.UserImage.id)
+                .all()
+            )
+        # user_image_idをキーとする辞書にタグ情報をセットする
+        user_image_tag_dict[user_image.UserImage.id] = user_image_tags
+        # 絞り込み結果のuser_image情報を配列セットする
+        filtered_user_images.append(user_image)
+    delete_form = DeleteForm()
+    detector_form = DetectorForm()
+
+    return render_template(
+        "detector/index.html",
+        # 絞り込んだuser_images配列を渡す
+        user_images=filtered_user_images,
+        # 画像に紐づくタグ一覧の辞書を渡す
+        user_image_tag_dict=user_image_tag_dict,
+        delete_form=delete_form,
+        detector_form=detector_form,
+    )
 
 
 def make_color(labels):
